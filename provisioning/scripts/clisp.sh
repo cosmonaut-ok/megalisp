@@ -2,7 +2,7 @@
 
 CLISP_URL='ftp://ftp.gnu.org/pub/gnu/clisp/latest/clisp-2.49.tar.bz2'
 GETDIR="$(mktemp -d /tmp/curl.XXXXXX)"
-CURL="$(which curl)"
+CURL="$(which curl) -s"
 CURL_OPTIONS='-o'
 WGET="$(which wget)"
 WGET_OPTIONS='-O'
@@ -22,7 +22,16 @@ fi
 
 $UNPACK $UNPACK_OPTIONS $(basename $CLISP_URL) && rm $(basename $CLISP_URL)
 cd clisp*
-./configure --prefix=/usr --with-module=modules/clx/new-clx --with-module=modules/dbus --with-module=modules/i18n --with-module=modules/regexp --with-module=modules/syscalls
+
+mkdir -p lib/lib
+mkdir -p lib/include
+
+ln -s `find /usr/lib/ -name '*sigsegv.a` lib/lib/
+ln -s `find /usr/include/ -name 'sigsegv.h` lib/include
+ln -s `find /usr/include/libsvm -name svm.h` lib/include
+
+./configure --with-libsigsegv-prefix=$(pwd)/lib --prefix=/usr/ --with-module=i18n --with-module=regexp --with-module=syscalls --with-module=fastcgi  --with-module=gtk2 --with-module=gdbm --with-module=libsvm build-with-gcc
+cd build-with-gcc
 make
-make install
+make check && make install
 rm -rf $GETDIR

@@ -1,0 +1,46 @@
+---
+
+- name: Installing basic working environment
+  apt: pkg={{ item }}
+  with_items:
+    - build-essential
+    - curl
+    - libc6:i386
+    - libgtk2.0-0:i386
+    - libsigsegv2
+    - libsigsegv-dev
+    - libffcall1
+    - libffcall1-dev
+    - libreadline6
+    - libreadline6-dev
+    - gettext
+    - libfcgi-dev
+    - libgdbm-dev
+    - libgdbm3
+    - git
+
+- name: Installing common lisp environment
+  apt: pkg={{ item }}
+  with_items:
+    - cl-swank
+    - cl-quicklisp
+
+- name: Installing emacs environment
+  apt: pkg={{ item }}
+  with_items:
+    - emacs-nox
+    - emacs-goodies-el
+    - ilisp
+    - slime
+    - ecb
+
+- name: Installing graphical environment
+  apt: pkg={{ item }}
+  with_items:
+    - xinit
+    - sawfish
+    - xorg-dev
+    - xorg
+    - libgtk2.0-dev
+    - libglade2-dev
+

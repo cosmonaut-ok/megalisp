@@ -4,7 +4,7 @@
 
 ACL_URL="http://franz.com/ftp/pub/acl100express/linux86/acl100express-linux-x86.bz2"
 GETDIR="$(mktemp -d /tmp/lw.XXXXXX)"
-CURL="$(which curl)"
+CURL="$(which curl) -s"
 CURL_OPTIONS='-o'
 WGET="$(which wget)"
 WGET_OPTIONS='-O'
@@ -22,11 +22,9 @@ else
     exit 1
 fi
 
-apt-get install -y libc6:i386 libgtk2.0-0:i386
-
 $UNPACK $UNPACK_OPTIONS $(basename $ACL_URL .bz2).tar.bz2 && rm $(basename $ACL_URL .bz2).tar.bz2
 
 mkdir -p /opt/
 mv acl* /opt/acl/
 ln -s /opt/acl/alisp /usr/bin/
-
+rm -rf $GETDIR

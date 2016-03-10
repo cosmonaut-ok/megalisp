@@ -1,0 +1,12 @@
+---
+
+- include: install_deb_env.yml
+  when: ansible_os_family == 'Debian'
+  tags: [common-lisp]
+
+- include: install_rh_env.yml
+  when: ansible_os_family == 'RedHat'
+  tags: [common-lisp]
+
+- include: configure.yml
+  tags: [common-lisp]

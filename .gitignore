@@ -4,3 +4,6 @@
 *~
 *#
 #*
+.vagrant
+dummy.box
+docker/id_rsa*

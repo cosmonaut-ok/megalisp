@@ -4,6 +4,8 @@
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
+Vagrant.require_plugin 'docker-provider'
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # All Vagrant configuration is done here. The most common configuration
   # options are documented and commented below. For a complete reference,
@@ -11,7 +13,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "dummy"
-  config.vm.box_url = "http://bit.ly/vagrant-docker-dummy"
+  # config.vm.box_url = "http://bit.ly/vagrant-docker-dummy"
+  config.vm.box_url = "file://./dummy.box"
 
   config.vm.hostname = "megalisp"
   # Disable automatic box update checking. If you disable this, then
@@ -35,8 +38,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # If true, then any SSH connections made will enable agent forwarding.
   # Default value: false
-  # config.ssh.forward_agent = true
-  config.ssh.username = "root"
+  config.ssh.forward_agent = true
+  # config.ssh.username = "root"
+  # config.ssh.password = "vagrant"
+  config.ssh.insert_key = true
+  config.ssh.private_key_path = 'docker/id_rsa'
+  config.ssh.shell = "bash -c 'BASH_ENV=/etc/profile exec bash'" 
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
@@ -44,18 +51,20 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
   config.vm.synced_folder ".", "/vagrant", disabled: true
+  # config.vm.synced_folder "provisioning/scripts", "/opt/scripts"
+  config.vm.synced_folder "/tmp/.X11-unix", "/tmp/.X11-unix"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Don't boot with headless mode
-  #   vb.gui = true
-  #
-  #   # Use VBoxManage to customize the VM. For example to change memory:
-  #   vb.customize ["modifyvm", :id, "--memory", "1024"]
-  # end
+  config.vm.provider "virtualbox" do |vb|
+    # Don't boot with headless mode
+    vb.gui = true
+  
+    # Use VBoxManage to customize the VM. For example to change memory:
+    # vb.customize ["modifyvm", :id, "--memory", "1024"]
+  end
   #
   # View the documentation for the provider you're using for more
   # information on available options.
@@ -133,4 +142,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # chef-validator, unless you changed the configuration.
   #
   #   chef.validation_client_name = "ORGNAME-validator"
+  #
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "provisioning/ansible/playbook.yml"
+    # ansible.verbose = "vvvv"
+    # ansible.install = true
+    ansible.limit = "all" # or only "nodes" group, etc.
+    ansible.groups = {
+      "all" => ["localhost"]
+    }
+  end
+  config.vm.provision "shell", path: "provisioning/scripts/acl.sh"
+  config.vm.provision "shell", path: "provisioning/scripts/ccl.sh"
+  config.vm.provision "shell", path: "provisioning/scripts/clisp.sh"
+  config.vm.provision "shell", path: "provisioning/scripts/lw.sh"
 end

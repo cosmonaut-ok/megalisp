@@ -2,7 +2,7 @@
 
 CCL_URL='ftp://ftp.clozure.com/pub/release/1.11/ccl-1.11-linuxx86.tar.gz'
 GETDIR="$(mktemp -d /tmp/ccl.XXXXXX)"
-CURL="$(which curl)"
+CURL="$(which curl) -s"
 CURL_OPTIONS='-o'
 WGET="$(which wget)"
 WGET_OPTIONS='-O'

@@ -7,7 +7,7 @@ LW_URL="http://downloads.lispworks.com/downloader/x86-linux/lwper61-x86-linux.ta
 LWDOC_URL="http://downloads.lispworks.com/downloader/x86-linux/lwdoc61-x86-linux.tar.gz?id=${LW_KEY}"
 LWLIC_URL="http://downloads.lispworks.com/downloader/x86-linux/lwlper-license.sh?id=${LW_KEY}"
 GETDIR="$(mktemp -d /tmp/lw.XXXXXX)"
-CURL="$(which curl)"
+CURL="$(which curl) -s"
 CURL_OPTIONS='-o'
 WGET="$(which wget)"
 WGET_OPTIONS='-O'
@@ -29,13 +29,10 @@ else
     exit 1
 fi
 
-dpkg --add-architecture i386
-apt-get update
-apt-get install libgtk2.0:i386
-
 $UNPACK $UNPACK_OPTIONS $(basename $LW_URL | cut -d'?' -f1) && rm $(basename $LW_URL | cut -d'?' -f1)
 $UNPACK $UNPACK_OPTIONS $(basename $LWDOC_URL | cut -d'?' -f1) && rm $(basename $LWDOC_URL | cut -d'?' -f1)
 
+if [ $? == 0 ]; then
 mkdir -p /opt/lw/
 mv lib /opt/lw/
 mv lispworks-personal* /opt/lw/
@@ -43,3 +40,8 @@ mv $(basename $LWLIC_URL | cut -d'?' -f1) /opt/lw/
 cd /opt/lw/
 sh -x $(basename $LWLIC_URL | cut -d'?' -f1)
 ln -sf /opt/lw/lispworks-personal* /usr/bin/
+rm -rf $GETDIR
+else
+    echo "Error loading files. Please, check key: $LW_KEY"
+    exit 1
+fi
