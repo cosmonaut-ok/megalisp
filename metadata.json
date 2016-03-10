@@ -1,3 +1,7 @@
 {
-    "provider": "docker"
+    "name": "cosmonaut/megalisp",
+    "description": "Dummy box for Common Lisp testing setup. Includes emacs and acl/ccl/clisp/ecl/sbcl/lw (abcl and cmucl not supported yet)",
+    "providers": [
+	{ "name": "docker" }
+    ]
 }
