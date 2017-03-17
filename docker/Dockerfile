@@ -1,6 +1,7 @@
 FROM debian:latest
 MAINTAINER Alexander Vynnyk <cosmonaut.ok@zoho.com>
 
+RUN echo nameserver 8.8.8.8 >> /etc/resolv.conf
 RUN dpkg --add-architecture i386
 RUN apt-get update
 RUN apt-get install -y openssh-server sudo python
